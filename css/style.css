@@ -1,0 +1,919 @@
+/* ============================================================
+   经典魔塔 - 样式总汇 (复古地牢像素风格 + 现代毛玻璃 GM 控制后台)
+   ============================================================ */
+
+@font-face {
+    font-family: "Mota";
+    src: url("../Word.ttf");
+}
+
+:root {
+    --bg-dark: #0b0f19;
+    --card-bg: #151d2f;
+    --border-color: #2a3754;
+    --gold: #f59e0b;
+    --cyan: #06b6d4;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --green: #10b981;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* 顶部导航通报条 */
+.top-header {
+    width: 100%;
+    background: #111827;
+    border-bottom: 2px solid var(--border-color);
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-gm-toggle {
+    background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(14, 165, 233, 0.4);
+    transition: all 0.2s;
+}
+
+.btn-gm-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px rgba(14, 165, 233, 0.7);
+}
+
+.btn-back-menu {
+    background: #374151;
+    color: #e5e7eb;
+    border: 1px solid #4b5563;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.btn-back-menu:hover {
+    background: #4b5563;
+}
+
+/* ============================================================
+   版本选择启动主页 (Launcher View)
+   ============================================================ */
+#version-launcher {
+    width: 100%;
+    max-width: 1100px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.launcher-hero {
+    margin-bottom: 40px;
+}
+
+.launcher-hero h1 {
+    font-size: 2.6rem;
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+}
+
+.launcher-hero p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.version-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.version-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: left;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.version-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--cyan);
+    box-shadow: 0 12px 28px rgba(6, 182, 212, 0.2);
+}
+
+.version-card.featured {
+    border-color: #f59e0b;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+.version-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #10b981;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.version-card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #f1f5f9;
+}
+
+.version-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.tag {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.version-desc {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.btn-play-version {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #000;
+    border: none;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: filter 0.2s;
+}
+
+.btn-play-version:hover {
+    filter: brightness(1.15);
+}
+
+/* ============================================================
+   游戏主体容器 (In-Game Container)
+   ============================================================ */
+#game-container {
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 1100px;
+}
+
+/* 左侧状态仪表盘 (HUD) - 经典魔塔石砖底纹与原版边框 */
+.hud-panel {
+    width: 260px;
+    background-color: #1a1e29;
+    background-image: url('../res/Floor.png');
+    border: 4px solid #d4af37;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 10px rgba(0, 0, 0, 0.8);
+    font-family: "Mota", -apple-system, sans-serif;
+}
+
+.hud-header {
+    text-align: center;
+    border-bottom: 2px solid #d4af37;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.floor-badge {
+    background: #000;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.hud-hero-profile {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #475569;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+}
+
+.pixel-avatar {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: #000;
+    border: 1px solid #d4af37;
+    border-radius: 4px;
+}
+
+.hud-section {
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.hud-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.hud-row:last-child {
+    border-bottom: none;
+}
+
+.hud-row .label {
+    color: #cbd5e1;
+}
+
+.hud-row .val {
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.equip-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.equip-row:last-child {
+    border-bottom: none;
+}
+
+.slot-canvas {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: #000;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    display: block;
+}
+
+.val-hp { color: #f87171 !important; }
+.val-atk { color: #fbbf24 !important; }
+.val-def { color: #60a5fa !important; }
+.val-gold { color: #facc15 !important; }
+.val-exp { color: #34d399 !important; }
+
+/* 钥匙状态 */
+.keys-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.key-slot {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.key-count {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.hud-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.hud-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.hud-btn:hover {
+    background: #334155;
+    color: #fff;
+}
+
+/* 中间游戏画布 */
+.canvas-wrapper {
+    position: relative;
+    border: 4px solid #d4af37;
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.35), 0 0 40px rgba(0, 0, 0, 0.9);
+    border-radius: 6px;
+    background-color: #000;
+    background-image: url('../res/Floor.png');
+    line-height: 0;
+}
+
+#game-canvas {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* 屏幕悬浮提示 Toast */
+#game-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(50px);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--gold);
+    color: #fef08a;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.25s ease;
+    z-index: 999;
+}
+
+#game-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* ============================================================
+   GM 控制后台侧边栏 (Admin & Cheat Drawer)
+   ============================================================ */
+#gm-panel {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.97);
+    border-left: 2px solid #38bdf8;
+    backdrop-filter: blur(14px);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#gm-panel.active {
+    right: 0;
+}
+
+.gm-header {
+    padding: 16px;
+    background: #0b1120;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gm-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gm-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.gm-close:hover {
+    color: #fff;
+}
+
+/* GM 选项卡 */
+.gm-tabs {
+    display: flex;
+    background: #0b1120;
+    border-bottom: 1px solid #1e293b;
+    overflow-x: auto;
+}
+
+.gm-tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.gm-tab-btn.active {
+    color: var(--cyan);
+    border-bottom-color: var(--cyan);
+    background: rgba(6, 182, 212, 0.08);
+}
+
+.gm-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.gm-tab-pane {
+    display: none;
+}
+
+.gm-tab-pane.active {
+    display: block;
+}
+
+/* 表单组与控件 */
+.gm-form-group {
+    margin-bottom: 16px;
+    background: #111a2e;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.gm-form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+
+.gm-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.gm-input {
+    flex-grow: 1;
+    background: #090e1a;
+    border: 1px solid #334155;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.gm-btn-sm {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.gm-btn-sm:hover {
+    background: #38bdf8;
+    color: #000;
+}
+
+/* 切换开关 (Switch) */
+.switch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #1e293b;
+}
+
+.switch-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.switch-label span:first-child {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.switch-label span:last-child {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #334155;
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #0ea5e9;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* 按钮组 */
+.gm-action-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: filter 0.2s;
+}
+
+.gm-action-btn:hover {
+    filter: brightness(1.2);
+}
+
+.gm-action-btn.secondary {
+    background: #1e293b;
+    border: 1px solid #334155;
+}
+
+.gm-action-btn.danger {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+/* ============================================================
+   各类弹窗模态框 (Game Modals)
+   ============================================================ */
+.game-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+}
+
+.game-modal.active {
+    display: flex;
+}
+
+.modal-box {
+    background: #131b2e;
+    border: 3px solid #38bdf8;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.3);
+    text-align: center;
+}
+
+.modal-box h3 {
+    color: var(--gold);
+    margin-bottom: 12px;
+}
+
+.shop-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.shop-buttons button {
+    background: #1e293b;
+    border: 1px solid #38bdf8;
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shop-buttons button:hover {
+    background: #38bdf8;
+    color: #000;
+}
+
+.btn-cancel {
+    border-color: #64748b !important;
+    color: #94a3b8 !important;
+}
+
+/* 战斗面板 */
+.battle-display {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.battle-unit {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 12px;
+    width: 140px;
+    text-align: center;
+}
+
+.battle-avatar {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: block;
+    margin: 0 auto 8px;
+    background: #000;
+    border: 1px solid #d4af37;
+    border-radius: 4px;
+}
+
+/* 怪物手册 */
+#book-modal .modal-box {
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.book-card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+.book-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.book-card-header h4 {
+    color: #f1f5f9;
+}
+
+.book-card-header .badge {
+    background: #334155;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #38bdf8;
+}
+
+.book-card-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    margin-bottom: 6px;
+}
+
+/* ============================================================
+   道具与宝物背包 (HUD Inventory)
+   ============================================================ */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    min-height: 48px;
+    align-content: start;
+}
+
+.inventory-slot {
+    position: relative;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 4px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+.inventory-slot:hover {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.45);
+    transform: translateY(-2px);
+}
+
+.inventory-slot.active-usable {
+    border-color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+}
+
+.inventory-slot.active-usable:hover {
+    border-color: #67e8f9;
+    box-shadow: 0 0 12px rgba(103, 232, 249, 0.6);
+}
+
+.inventory-slot canvas {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: block;
+}
+
+.inventory-slot-name {
+    font-size: 0.68rem;
+    color: #cbd5e1;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 52px;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.inventory-empty-tip {
+    grid-column: span 4;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    padding: 10px 0;
+}
+
+/* ============================================================
+   楼层传送弹窗 (Fly Floors Grid)
+   ============================================================ */
+.fly-floors-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 6px 2px;
+}
+
+.fly-floor-btn {
+    background: #1e293b;
+    border: 1px solid #38bdf8;
+    color: #f1f5f9;
+    padding: 10px 4px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fly-floor-btn:hover {
+    background: #38bdf8;
+    color: #000;
+    transform: scale(1.04);
+}
+
+.fly-floor-btn.current {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.2);
+    color: #facc15;
+}
+
+.fly-floor-btn.big-fly-btn {
+    border-color: #eab308;
+    background: linear-gradient(135deg, #1e293b, #1f2937);
+    color: #fef08a;
+}
+
+.fly-floor-btn.big-fly-btn:hover {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #000;
+}
+

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经典魔塔全集 · 网页重制版 (自带GM控制后台)</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- 顶部常驻导航栏 -->
+    <header class="top-header">
+        <div class="brand-title">
+            <span>🏰</span>
+            <span id="header-brand">经典魔塔合集</span>
+            <span style="font-size:0.85rem; color:#94a3b8; font-weight:normal;" id="current-game-title"></span>
+        </div>
+        <div class="header-actions">
+            <button class="btn-back-menu" onclick="window.backToLauncher()">🏠 版本选择</button>
+            <button class="btn-back-menu" onclick="window.sounds.toggleSound()">🔊 声音</button>
+            <button class="btn-gm-toggle" onclick="window.gmPanel.toggle()">⚡ GM 控制后台 (~)</button>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         1. 版本选择启动主页 (Launcher View)
+         ============================================================ -->
+    <section id="version-launcher">
+        <div class="launcher-hero">
+            <h1>魔塔经典三大版本合集</h1>
+            <p>原汁原味还原经典关卡 · 内置全能 GM 调控后台 · 随时随地穿墙无敌探索秘境</p>
+        </div>
+
+        <div class="version-cards-grid">
+            <!-- 版本 1: 经典 21/24层魔塔 -->
+            <div class="version-card featured">
+                <span class="version-badge">完整重制 · 推荐</span>
+                <h2>21层 / 24层魔塔</h2>
+                <div class="version-tags">
+                    <span class="tag">胖老鼠经典版</span>
+                    <span class="tag">童年情怀</span>
+                    <span class="tag">地下隐藏龙渊</span>
+                    <span class="tag">战斗爽快</span>
+                </div>
+                <div class="version-desc">
+                    国内 4399/7k7k 最风靡的经典版本！节奏明快，数值成长爆炸。决战 20F 冥灵魔王拯救公主，或深入 24F 挑战深渊红衣魔龙！
+                </div>
+                <button class="btn-play-version" onclick="window.selectGameVersion('classic21')">进入 21/24层 经典版</button>
+            </div>
+
+            <!-- 版本 2: 经典 50层魔塔 -->
+            <div class="version-card">
+                <span class="version-badge" style="background:#3b82f6;">鼻祖原版</span>
+                <h2>50层魔塔 (TSW)</h2>
+                <div class="version-tags">
+                    <span class="tag">渡部直 1996</span>
+                    <span class="tag">严谨数值规划</span>
+                    <span class="tag">商店价格翻倍</span>
+                    <span class="tag">策略神作</span>
+                </div>
+                <div class="version-desc">
+                    魔塔系列的起源开山之作！考验步步为营的极限定算，红黄蓝钥匙精确分配，每一滴血量都是通关的关键博弈。
+                </div>
+                <button class="btn-play-version" style="background:linear-gradient(135deg, #3b82f6, #1d4ed8); color:#fff;" onclick="window.selectGameVersion('tower50')">进入 50层 体验版</button>
+            </div>
+
+            <!-- 版本 3: 新新魔塔 -->
+            <div class="version-card">
+                <span class="version-badge" style="background:#8b5cf6;">革新巅峰</span>
+                <h2>新新魔塔 (56层)</h2>
+                <div class="version-tags">
+                    <span class="tag">cos105hk</span>
+                    <span class="tag">暴击闪避</span>
+                    <span class="tag">勇者/贤者证</span>
+                    <span class="tag">毒衰状态</span>
+                </div>
+                <div class="version-desc">
+                    突破传统死板算式的机制革新神作！引入暴击机制、转职职业之证与庞大立体分支迷宫，硬核玩家心中不可超越的高峰。
+                </div>
+                <button class="btn-play-version" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); color:#fff;" onclick="window.selectGameVersion('xinxin')">进入 新新魔塔 体验版</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         2. 游戏主体运行视图 (In-Game Container)
+         ============================================================ -->
+    <main id="game-container">
+        <!-- 左侧属性 HUD 仪表盘 -->
+        <aside class="hud-panel">
+            <div class="hud-header">
+                <span class="floor-badge" id="hud-floor">魔塔 0F</span>
+            </div>
+
+            <div class="hud-hero-profile">
+                <canvas id="hud-hero-icon" width="32" height="32" class="pixel-avatar"></canvas>
+                <div class="hud-row" style="flex-grow:1; margin-left:10px;"><span class="label">勇士等级</span><span class="val" id="hud-level">1</span></div>
+            </div>
+
+            <div class="hud-section">
+                <div class="hud-row"><span class="label">生命值</span><span class="val val-hp" id="hud-hp">1000</span></div>
+                <div class="hud-row"><span class="label">攻击力</span><span class="val val-atk" id="hud-atk">10</span></div>
+                <div class="hud-row"><span class="label">防御力</span><span class="val val-def" id="hud-def">10</span></div>
+                <div class="hud-row"><span class="label">金币</span><span class="val val-gold" id="hud-gold">0</span></div>
+                <div class="hud-row"><span class="label">经验</span><span class="val val-exp" id="hud-exp">0</span></div>
+                <div class="hud-row" id="hud-row-cri" style="display:none;"><span class="label">暴击率</span><span class="val" style="color:#f59e0b;" id="hud-cri">5%</span></div>
+                <div class="hud-row" id="hud-row-agi" style="display:none;"><span class="label">敏捷/闪避</span><span class="val" style="color:#10b981;" id="hud-agi">2%</span></div>
+            </div>
+
+            <!-- 装备槽 -->
+            <div class="hud-section">
+                <div class="equip-row">
+                    <canvas id="hud-sword-icon" width="32" height="32" class="slot-canvas"></canvas>
+                    <div style="flex-grow:1;"><span class="label">佩剑:</span> <span class="val" id="hud-sword">无</span></div>
+                </div>
+                <div class="equip-row">
+                    <canvas id="hud-shield-icon" width="32" height="32" class="slot-canvas"></canvas>
+                    <div style="flex-grow:1;"><span class="label">佩盾:</span> <span class="val" id="hud-shield">无</span></div>
+                </div>
+            </div>
+
+            <!-- 钥匙槽 -->
+            <div class="hud-section">
+                <div style="font-size:0.85rem; color:#ffd700; margin-bottom:6px; font-weight:bold;">钥匙储备</div>
+                <div class="keys-grid">
+                    <div class="key-slot">
+                        <canvas id="hud-key-yellow-icon" width="32" height="32" class="slot-canvas"></canvas>
+                        <span class="key-count" id="hud-yellow-keys">1</span>
+                    </div>
+                    <div class="key-slot">
+                        <canvas id="hud-key-blue-icon" width="32" height="32" class="slot-canvas"></canvas>
+                        <span class="key-count" id="hud-blue-keys">1</span>
+                    </div>
+                    <div class="key-slot">
+                        <canvas id="hud-key-red-icon" width="32" height="32" class="slot-canvas"></canvas>
+                        <span class="key-count" id="hud-red-keys">0</span>
+                    </div>
+                    <div class="key-slot" id="hud-key-green-slot" style="display:none;">
+                        <canvas id="hud-key-green-icon" width="32" height="32" class="slot-canvas"></canvas>
+                        <span class="key-count" id="hud-green-keys">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 道具与宝物背包 -->
+            <div class="hud-section" id="hud-inventory-section">
+                <div style="font-size:0.85rem; color:#ffd700; margin-bottom:6px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+                    <span>宝物背包</span>
+                    <span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;">点击使用/查看</span>
+                </div>
+                <div class="inventory-grid" id="hud-inventory-grid">
+                    <!-- 动态生成物品格子 -->
+                </div>
+            </div>
+
+            <!-- 快捷操作按钮 -->
+            <div class="hud-actions">
+                <button class="hud-btn" id="hud-fly-btn" onclick="window.game.openFlyModal()">🪽 楼层传送 (J)</button>
+                <button class="hud-btn" onclick="window.game.openMonsterBook()">📖 怪物手册 (L)</button>
+                <button class="hud-btn" onclick="window.gmPanel.saveToStorage()">💾 快速存档 (F5)</button>
+                <button class="hud-btn" onclick="window.gmPanel.loadFromStorage()">📂 快速读档 (F9)</button>
+                <button class="hud-btn" style="border-color:#0ea5e9; color:#38bdf8;" onclick="window.gmPanel.toggle()">⚡ GM 控制后台 (~)</button>
+            </div>
+        </aside>
+
+        <!-- 中间游戏画布核心 -->
+        <div class="canvas-wrapper">
+            <canvas id="game-canvas"></canvas>
+        </div>
+    </main>
+
+    <!-- 悬浮 Toast 消息 -->
+    <div id="game-toast">消息提示</div>
+
+    <!-- ============================================================
+         3. GM 控制后台侧边栏 (Admin & Cheat Drawer)
+         ============================================================ -->
+    <aside id="gm-panel">
+        <div class="gm-header">
+            <div class="gm-title">
+                <span>⚡</span>
+                <span>魔塔 GM 特权后台</span>
+            </div>
+            <button class="gm-close" onclick="window.gmPanel.toggle()">×</button>
+        </div>
+
+        <!-- 选项卡导航 -->
+        <div class="gm-tabs">
+            <button class="gm-tab-btn active" data-tab="gm-tab-stats">数值调控</button>
+            <button class="gm-tab-btn" data-tab="gm-tab-items">道具仓库</button>
+            <button class="gm-tab-btn" data-tab="gm-tab-cheats">特权超能力</button>
+            <button class="gm-tab-btn" data-tab="gm-tab-teleport">空间跳跃</button>
+            <button class="gm-tab-btn" data-tab="gm-tab-presets">预设与存档</button>
+        </div>
+
+        <div class="gm-content">
+            <!-- 选项卡 1: 人物数值 -->
+            <div id="gm-tab-stats" class="gm-tab-pane active">
+                <div class="gm-form-group">
+                    <label>生命值 (HP)</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-hp" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('hp', 1000)">+1000</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('hp', 999999)">锁满血</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>攻击力 (ATK)</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-atk" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('atk', 50)">+50</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('atk', 9999)">9999</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>防御力 (DEF)</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-def" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('def', 50)">+50</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('def', 9999)">9999</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>金币 (Gold)</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-gold" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('gold', 500)">+500</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('gold', 99999)">巨款</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>经验 (EXP)</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-exp" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('exp', 500)">+500</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('exp', 99999)">满经验</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>勇士等级 (Level)</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-level" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('level', 1)">+1级</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('level', 99)">99级</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 选项卡 2: 道具库存 -->
+            <div id="gm-tab-items" class="gm-tab-pane">
+                <div class="gm-form-group">
+                    <label>黄钥匙数量</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-key-y" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('yellowKeys', 10)">+10</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('yellowKeys', 99)">99把</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>蓝钥匙数量</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-key-b" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('blueKeys', 10)">+10</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('blueKeys', 99)">99把</button>
+                    </div>
+                </div>
+
+                <div class="gm-form-group">
+                    <label>红钥匙数量</label>
+                    <div class="gm-input-row">
+                        <input type="number" id="gm-key-r" class="gm-input">
+                        <button class="gm-btn-sm" onclick="window.gmPanel.addStat('redKeys', 5)">+5</button>
+                        <button class="gm-btn-sm" onclick="window.gmPanel.setStat('redKeys', 99)">99把</button>
+                    </div>
+                </div>
+
+                <button class="gm-action-btn" onclick="window.gmPanel.equipGodSet()">✨ 一键装备神圣毕业全套神器</button>
+                <button class="gm-action-btn secondary" onclick="window.game.lootCurrentFloor()">💎 一键拾取当前层所有宝物</button>
+            </div>
+
+            <!-- 选项卡 3: 特权超能力 -->
+            <div id="gm-tab-cheats" class="gm-tab-pane">
+                <div class="switch-row">
+                    <label for="gm-toggle-noclip" class="switch-label">
+                        <span>👻 幽灵穿墙 (Noclip)</span>
+                        <span>无视所有地形、墙壁与门，全图随意穿行</span>
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="gm-toggle-noclip">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-row">
+                    <label for="gm-toggle-god" class="switch-label">
+                        <span>🛡️ 绝对无敌 (God Mode)</span>
+                        <span>与任何怪物战斗受到的伤害恒定为 0</span>
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="gm-toggle-god">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-row">
+                    <label for="gm-toggle-onehit" class="switch-label">
+                        <span>⚔️ 一击必杀 (One-Hit KO)</span>
+                        <span>包括魔王 Boss 在内，任何怪物一回合直接斩杀</span>
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="gm-toggle-onehit">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-row">
+                    <label for="gm-toggle-key" class="switch-label">
+                        <span>🗝️ 万能钥匙 (Master Key)</span>
+                        <span>开任意大门不消耗钥匙，零损耗通行</span>
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="gm-toggle-key">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-row">
+                    <label for="gm-toggle-damage" class="switch-label">
+                        <span>👁️ 全图显伤 (Always Show Damage)</span>
+                        <span>怪物头顶实时标注预测扣血数值</span>
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="gm-toggle-damage">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div style="margin-top:20px;">
+                    <button class="gm-action-btn danger" onclick="window.game.clearCurrentFloorMonsters()">🧹 一键秒杀当前层所有怪物并收割金币经验</button>
+                </div>
+            </div>
+
+            <!-- 选项卡 4: 空间跳跃 -->
+            <div id="gm-tab-teleport" class="gm-tab-pane">
+                <div class="gm-form-group">
+                    <label>直达指定楼层</label>
+                    <div class="gm-input-row">
+                        <select id="gm-floor-select" class="gm-input">
+                            <option value="0">0F - 地下牢房序章</option>
+                            <option value="1">1F - 初入险境</option>
+                            <option value="2">2F - 铁剑密室</option>
+                            <option value="3">3F - 金币祭坛圣殿</option>
+                            <option value="4">4F - 铁栅暗道</option>
+                            <option value="5">5F - 经验圣殿</option>
+                            <option value="6">6F - 铁盾防线</option>
+                            <option value="7">7F - 迂回回廊</option>
+                            <option value="8">8F - 迷阵关隘</option>
+                            <option value="9">9F - 骑士佩剑</option>
+                            <option value="10">10F - 决战红衣魔王 (第一阶段Boss)</option>
+                            <option value="11">11F - 进阶金币圣殿</option>
+                            <option value="12">12F - 骑士铁盾</option>
+                            <option value="13">13F - 圣灵十字架</option>
+                            <option value="14">14F - 巨型暗阵</option>
+                            <option value="15">15F - 圣水甘泉</option>
+                            <option value="16">16F - 屠龙密室</option>
+                            <option value="17">17F - 圣剑封印</option>
+                            <option value="18">18F - 营救公主王座</option>
+                            <option value="19">19F - 十字星阵</option>
+                            <option value="20">20F - 决战冥灵魔王 (20F Boss)</option>
+                            <option value="21">21F - 最终试炼</option>
+                            <option value="22">22F - 封印之门</option>
+                            <option value="23">23F - 密室回廊</option>
+                            <option value="24">24F - 地下龙渊 (终极魔龙)</option>
+                        </select>
+                        <button class="gm-btn-sm" style="background:#38bdf8; color:#000;" onclick="window.gmPanel.teleport()">立即跃迁</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 选项卡 5: 快捷预设与存档 -->
+            <div id="gm-tab-presets" class="gm-tab-pane">
+                <button class="gm-action-btn" onclick="window.gmPanel.applyPreset('god')">💥 启动【一拳超人满血无敌秒杀】预设</button>
+                <button class="gm-action-btn secondary" onclick="window.gmPanel.applyPreset('novice')">🎁 领取【新手舒适探索】礼包</button>
+                <button class="gm-action-btn secondary" onclick="window.gmPanel.applyPreset('classic')">🔄 重置为原版平衡模式</button>
+
+                <hr style="border:0; border-top:1px solid #1e293b; margin:16px 0;">
+
+                <button class="gm-action-btn secondary" onclick="window.gmPanel.saveToStorage()">💾 快速存档 (存入本地存储)</button>
+                <button class="gm-action-btn secondary" onclick="window.gmPanel.loadFromStorage()">📂 快速读档 (从本地读取)</button>
+                <button class="gm-action-btn secondary" onclick="window.gmPanel.exportSaveJSON()">📋 导出存档 JSON 码</button>
+                <button class="gm-action-btn secondary" onclick="window.gmPanel.importSaveJSON()">📥 导入存档 JSON 码</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+         4. 模态弹窗系统
+         ============================================================ -->
+
+    <!-- 战斗交锋弹窗 -->
+    <div id="battle-modal" class="game-modal">
+        <div class="modal-box">
+            <h3>⚔️ 遭遇激战！</h3>
+            <div class="battle-display">
+                <div class="battle-unit">
+                    <canvas id="battle-h-canvas" width="48" height="48" class="battle-avatar"></canvas>
+                    <h4 style="color:#60a5fa;">勇士</h4>
+                    <p style="margin-top:6px; font-size:0.85rem;">生命: <b id="battle-h-hp">1000</b></p>
+                </div>
+                <div style="font-size:1.8rem; font-weight:700; color:#ef4444;">VS</div>
+                <div class="battle-unit">
+                    <canvas id="battle-m-canvas" width="48" height="48" class="battle-avatar"></canvas>
+                    <h4 style="color:#f87171;" id="battle-m-name">怪物</h4>
+                    <p style="margin-top:6px; font-size:0.85rem;">生命: <b id="battle-m-hp">0</b></p>
+                    <p style="font-size:0.85rem;">攻: <b id="battle-m-atk">0</b> 防: <b id="battle-m-def">0</b></p>
+                </div>
+            </div>
+            <p style="color:#fbbf24; font-size:0.95rem;">本场战斗预期战损: <b id="battle-loss">0</b> HP</p>
+        </div>
+    </div>
+
+    <!-- 剧情对话弹窗 -->
+    <div id="dialog-modal" class="game-modal">
+        <div class="modal-box">
+            <div style="display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:8px;">
+                <canvas id="dialog-avatar" width="36" height="36" class="pixel-avatar"></canvas>
+                <h3 id="dialog-speaker" style="margin:0;">对话</h3>
+            </div>
+            <p id="dialog-text" style="line-height:1.7; color:#cbd5e1; margin:14px 0; text-align:left;"></p>
+            <button class="gm-action-btn" onclick="window.game.closeActiveModals()">确定</button>
+        </div>
+    </div>
+
+    <!-- 商店模态框 -->
+    <div id="shop-modal" class="game-modal">
+        <div class="modal-box" id="shop-content">
+            <!-- 动态生成 -->
+        </div>
+    </div>
+
+    <!-- 怪物手册模态框 -->
+    <div id="book-modal" class="game-modal">
+        <div class="modal-box">
+            <h3>📖 魔塔怪物洞悉手册</h3>
+            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:12px;">实时计算当前楼层所有怪物的战损数据与破防状态：</p>
+            <div id="book-list"></div>
+            <button class="gm-action-btn" style="margin-top:14px;" onclick="window.game.closeActiveModals()">关闭手册</button>
+        </div>
+    </div>
+
+    <!-- 楼层传送器模态框 -->
+    <div id="fly-modal" class="game-modal">
+        <div class="modal-box" style="max-width:440px;">
+            <h3>🪽 楼层传送圣器</h3>
+            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:14px;">
+                选择已探明并解锁的楼层，瞬间跃迁至该层楼梯口：
+            </p>
+            <div id="fly-floor-list" class="fly-floors-grid">
+                <!-- 动态生成 0F ~ maxVisitedFloor 按钮 -->
+            </div>
+            <button class="gm-action-btn secondary" style="margin-top:16px;" onclick="window.game.closeActiveModals()">取消返回</button>
+        </div>
+    </div>
+
+    <!-- 引入游戏逻辑组件 -->
+    <script src="js/audio.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/maps_classic21.js"></script>
+    <script src="js/maps_tower50.js"></script>
+    <script src="js/maps_xinxin.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/gm.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
